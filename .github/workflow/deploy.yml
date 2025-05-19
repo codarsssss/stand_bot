@@ -17,10 +17,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Rsync files to VPS
+      - name: Rsync to VPS
         run: |
-          rsync -az --exclude .venv --exclude data --exclude .env . ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}
+          rsync -az --exclude .venv --exclude .env --exclude data \
+            . ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}
 
-      - name: Restart Docker Compose
+      - name: Restart bot
         run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cd ${{ secrets.VPS_PATH }} && docker compose down && docker compose up -d --build"
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          cd ${{ secrets.VPS_PATH }}
+          docker compose down
+          docker compose up -d --build
+          EOF
