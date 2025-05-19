@@ -1,0 +1,9 @@
+services:
+  bot:
+    build: .
+    container_name: standing_bot
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
